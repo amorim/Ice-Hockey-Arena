@@ -10,7 +10,7 @@ using namespace std;
 #include <cmath>
 
 const int WIDTH = 500, HEIGHT = 800;
-const bool pixel = true, bresenhamMode = true;
+const bool pixel = true, bresenhamMode = false;
 const double squareSizeDiv2 = 0.5;
 
 bool ready = false;
@@ -33,7 +33,7 @@ double cornerRadious;
 int pointsReceived = 0;
 
 void init(void) {
-    glClearColor(0.0, 0.0, 0.0, 0.0);
+    glClearColor(1, 1, 1, 1);
     gluOrtho2D(0, WIDTH, 0, HEIGHT);
 }
 
@@ -45,7 +45,7 @@ void drawPoint(double x, double y)
 
 void bresenham(Line line)
 {
-    glBegin(GL_POINTS);
+    if (pixel) glBegin(GL_POINTS);
     Line aux = line;
     // If the line is steeper, we better swap x by y and continue drawing going up
     bool steep = abs(line.pf.y - line.pi.y) > abs(line.pf.x - line.pi.x);
@@ -67,13 +67,14 @@ void bresenham(Line line)
         if (steep) drawPoint(y, x); else drawPoint(x, y);
     }
     line = aux;
-    glEnd();
+    if (pixel) glEnd();
 }
 void lineEquation(Line line)
 {
     // y = m*x + b
     // m = (y1 - y0)/(x1 - x0)
-    // b = 0 (in this case)
+    // b = y0 (in this case)
+    if (pixel) glBegin(GL_POINTS);
     bool steep = abs(line.pf.y - line.pi.y) > abs(line.pf.x - line.pi.x);
     if (steep) swap(line.pi.x, line.pi.y), swap(line.pf.x, line.pf.y);
     if (line.pi.x > line.pf.x) swap(line.pi.x, line.pf.x), swap(line.pi.y, line.pf.y);
@@ -81,8 +82,14 @@ void lineEquation(Line line)
     for (double x = line.pi.x, y = line.pi.y; x <= line.pf.x; x ++)
     {
         if (steep) drawPoint(y, x); else drawPoint(x, y);
-        y = m * x;
+        y = m * x + line.pi.y;
     }
+    if (pixel) glEnd();
+}
+void drawLine(Line line)
+{
+    if (bresenhamMode) bresenham(line);
+    else lineEquation(line);
 }
 
 void circlePoints(double x, double y, bool q1, bool q2, bool q3, bool q4)
@@ -96,7 +103,7 @@ void midPointCircle(Circle circle, bool q1, bool q2, bool q3, bool q4)
 {
     glPushMatrix();
     glTranslated(circle.center.x, circle.center.y, 0);
-    glBegin(GL_POINTS);
+    if (pixel) glBegin(GL_POINTS);
     int x = 0, y = circle.radious;
     double d;
     d = (double) 5 / 4 - circle.radious;
@@ -108,14 +115,8 @@ void midPointCircle(Circle circle, bool q1, bool q2, bool q3, bool q4)
         else d += 2 * (x - y) + 5, x ++, y --;
         circlePoints(x, y, q1, q2, q3, q4);
     }
-    glEnd();
+    if (pixel) glEnd();
     glPopMatrix();
-}
-
-void drawLine(Line line)
-{
-    if (bresenhamMode) bresenham(line);
-    else lineEquation(line);
 }
 void drawCircle(Circle circle, bool q1, bool q2, bool q3, bool q4)
 {
@@ -127,7 +128,7 @@ double rot = 0;
 int factor = 1;
 void display(void) {
     glClear(GL_COLOR_BUFFER_BIT);
-    glClearColor(1, 1, 1, 1);
+    // glClearColor(1, 1, 1, 1);
 
     if (ready) {
         glColor3ub(0, 0, 255);
@@ -168,7 +169,7 @@ void mouseClicked(int button, int state, int x, int y) {
             if (pointsReceived == 2)
                 ready = true;
         }
-        printf("Start Points: %d %d and %d %d | cornerRadious: %lf\n", startPoints[0].x, startPoints[0].y, startPoints[1].x,
+        printf("Start Points: %lf %lf and %lf %lf | cornerRadious: %lf\n", startPoints[0].x, startPoints[0].y, startPoints[1].x,
                startPoints[1].y, cornerRadious);
     }
 }
