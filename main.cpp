@@ -102,26 +102,42 @@ void circlePoints(double x, double y, bool q1, bool q2, bool q3, bool q4)
 void midPointCircle(Circle circle, bool q1, bool q2, bool q3, bool q4)
 {
     glPushMatrix();
-    glTranslated(circle.center.x, circle.center.y, 0);
-    if (pixel) glBegin(GL_POINTS);
-    int x = 0, y = circle.radious;
-    double d;
-    d = (double) 5 / 4 - circle.radious;
+        glTranslated(circle.center.x, circle.center.y, 0);
+        if (pixel) glBegin(GL_POINTS);
 
-    circlePoints(x, y, q1, q2, q3, q4);
-    while (y > x)
-    {
-        if (d < 0) d += 2 * x + 3, x ++;
-        else d += 2 * (x - y) + 5, x ++, y --;
+        int x = 0, y = circle.radious;
+        double d = (double) 5 / 4 - circle.radious;
         circlePoints(x, y, q1, q2, q3, q4);
-    }
-    if (pixel) glEnd();
+        while (y > x)
+        {
+            if (d < 0) d += 2 * x + 3, x ++;
+            else d += 2 * (x - y) + 5, x ++, y --;
+            circlePoints(x, y, q1, q2, q3, q4);
+        }
+
+        if (pixel) glEnd();
+    glPopMatrix();
+}
+void circleEquation(Circle circle, bool q1, bool q2, bool q3, bool q4)
+{
+    glPushMatrix();
+        glTranslated(circle.center.x, circle.center.y, 0);
+        if (pixel) glBegin(GL_POINTS);
+
+        double end = circle.radious / sqrt(2) + 1;
+        for (double x = 0, y = circle.radious; x <= end; x ++)
+        {
+            circlePoints(x, y, q1, q2, q3, q4);
+            y = sqrt(pow(circle.radious, 2) - pow(x, 2));
+        }
+
+        if (pixel) glEnd();
     glPopMatrix();
 }
 void drawCircle(Circle circle, bool q1, bool q2, bool q3, bool q4)
 {
     if (bresenhamMode) midPointCircle(circle, q1, q2, q3, q4);
-    else;
+    else circleEquation(circle, q1, q2, q3, q4);
 }
 
 double rot = 0;
