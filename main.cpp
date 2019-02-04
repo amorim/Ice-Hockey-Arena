@@ -140,6 +140,14 @@ void drawCircle(Circle circle, bool q1, bool q2, bool q3, bool q4)
     else circleEquation(circle, q1, q2, q3, q4);
 }
 
+void drawRectangle(Point a, Point b)
+{
+  drawLine({{a.x, a.y}, {b.x, a.y}});
+  drawLine({{b.x, a.y}, {b.x, b.y}});
+  drawLine({{b.x, b.y}, {a.x, b.y}});
+  drawLine({{a.x, b.y}, {a.x, a.y}});
+}
+
 double rot = 0;
 int factor = 1;
 void display(void) {
@@ -148,6 +156,11 @@ void display(void) {
 
     if (ready) {
         glColor3ub(0, 0, 255);
+
+        Point a = startPoints[0], b = startPoints[1];
+        startPoints[0].x = min(a.x, b.x), startPoints[0].y = max(a.y, b.y);
+        startPoints[1].x = max(a.x, b.x), startPoints[1].y = min(a.y, b.y);
+
         drawLine({{startPoints[0].x + cornerRadious, startPoints[0].y}, {startPoints[1].x - cornerRadious, startPoints[0].y}});
         drawLine({{startPoints[1].x, startPoints[0].y - cornerRadious}, {startPoints[1].x, startPoints[1].y + cornerRadious}});
         drawLine({{startPoints[1].x - cornerRadious, startPoints[1].y}, {startPoints[0].x + cornerRadious, startPoints[1].y}});

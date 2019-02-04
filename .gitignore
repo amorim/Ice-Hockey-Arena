@@ -68,3 +68,4 @@ fabric.properties
 # Nelson :)
 *.o
 *.exe
+test
