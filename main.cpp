@@ -93,8 +93,9 @@ void drawLine(Line line)
     Point perpendicularVector = {cos(t), sin(t)};
     for (int j = 0; j < penWidth; j ++)
     {
-        Line aux = {{line.pf.x + (j - (penWidth - 1) / 2.0) * perpendicularVector.x, line.pf.y + (j - (penWidth - 1) / 2.0) * perpendicularVector.y},
-                {line.pi.x + (j - (penWidth - 1) / 2.0) * perpendicularVector.x, line.pi.y + (j - (penWidth - 1) / 2.0) * perpendicularVector.y}};
+        double p = (j - (penWidth - 1) / 2.0);
+        Line aux = {{line.pf.x + p * perpendicularVector.x, line.pf.y + p * perpendicularVector.y},
+                {line.pi.x + p * perpendicularVector.x, line.pi.y + p * perpendicularVector.y}};
         if (bresenhamMode) bresenham(aux);
         else lineEquation(aux);
     }
@@ -113,7 +114,7 @@ void midPointCircle(Circle circle, bool q1, bool q2, bool q3, bool q4)
         glTranslated(circle.center.x, circle.center.y, 0);
         if (pixel) glBegin(GL_POINTS);
 
-        int x = 0, y = circle.radious;
+        double x = 0, y = circle.radious;
         double d = (double) 5 / 4 - circle.radious;
         circlePoints(x, y, q1, q2, q3, q4);
         while (y > x)
